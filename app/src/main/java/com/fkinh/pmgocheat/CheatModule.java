@@ -1,10 +1,14 @@
 package com.fkinh.pmgocheat;
 
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -26,11 +30,16 @@ public class CheatModule implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("Loaded app: " + lpparam.packageName);
+
+        if (!lpparam.packageName.equals("com.nianticlabs.pokemongo")){
+            return;
+        }
+
         findAndHookMethod("android.location.LocationManager", lpparam.classLoader, "getLastKnownLocation", String.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 //                super.beforeHookedMethod(param);
-                Log.i(TAG, "location provider:" + param.args[0].toString());
+                XposedBridge.log("location provider:" + param.args[0].toString());
             }
 
             @Override
@@ -41,9 +50,9 @@ public class CheatModule implements IXposedHookLoadPackage {
                     if (location != null) {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
-                        Log.i(TAG, "location = " + latitude + ", " + longitude);
+                        XposedBridge.log("location = " + latitude + ", " + longitude);
                     } else {
-                        Log.i(TAG, "location not found.");
+                        XposedBridge.log("location not found.");
                     }
                 } catch (Exception e){
                     e.printStackTrace();
@@ -55,7 +64,7 @@ public class CheatModule implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 //                super.beforeHookedMethod(param);
-                Log.i(TAG, "location provider:" + param.args[0].toString());
+                XposedBridge.log("location provider:" + param.args[0].toString());
             }
 
             @Override
@@ -67,7 +76,7 @@ public class CheatModule implements IXposedHookLoadPackage {
                     double end = result-(INIT_LAT-modify);
                     String format = String.format("%7f", end);
                     param.setResult(Double.parseDouble(format));
-                    Log.i(TAG, "get latitude result:" + end);
+                    XposedBridge.log("get latitude result:" + end);
                 } catch (Exception e){
                     e.printStackTrace();
                 }
@@ -78,7 +87,7 @@ public class CheatModule implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
 //                super.beforeHookedMethod(param);
-                Log.i(TAG, "location provider:" + param.args[0].toString());
+                XposedBridge.log("location provider:" + param.args[0].toString());
             }
 
             @Override
@@ -89,7 +98,7 @@ public class CheatModule implements IXposedHookLoadPackage {
                 double end = result-(INIT_LNG-modify);
                 String format = String.format("%7f", end);
                 param.setResult(Double.parseDouble(format));
-                Log.i(TAG, "get longitude result:" + end);
+                XposedBridge.log("get longitude result:" + end);
             }
         });
 
