@@ -29,7 +29,9 @@ public class CheatModule implements IXposedHookLoadPackage {
         }
 
         hookLocation(lpparam);
-//        hookLatitude(lpparam);
+
+        //// TODO: 2016-07-20 problems need to be solved
+        hookLatitude(lpparam);
         hookLongitude(lpparam);
     }
 
